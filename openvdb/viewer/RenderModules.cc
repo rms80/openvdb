@@ -30,6 +30,24 @@
 
 #include "RenderModules.h"
 
+#ifdef OPENVDB_USE_GLFW_3
+#define GLFW_INCLUDE_GLU
+#if defined(WIN32)
+	#include <GL/glew.h>
+#endif
+#include <GLFW/glfw3.h>
+#else // if !defined(OPENVDB_USE_GLFW_3)
+#if defined(__APPLE__) || defined(MACOSX)
+#include <OpenGL/gl.h>
+#include <OpenGL/glu.h>
+#else
+#include <GL/gl.h>
+#include <GL/glu.h>
+#endif
+#include <GL/glfw.h>
+#endif // !defined(OPENVDB_USE_GLFW_3)
+
+
 #include <openvdb/tools/Prune.h>
 #include <openvdb/tree/LeafManager.h>
 #include <openvdb/util/logging.h>
@@ -301,7 +319,7 @@ BufferObject::render() const
 }
 
 void
-BufferObject::genIndexBuffer(const std::vector<GLuint>& v, GLenum primType)
+BufferObject::genIndexBuffer(const std::vector<unsigned int>& v, unsigned int primType)
 {
     // clear old buffer
     if (glIsBuffer(mIndexBuffer) == GL_TRUE) glDeleteBuffers(1, &mIndexBuffer);

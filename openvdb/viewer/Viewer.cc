@@ -48,8 +48,18 @@
 #include <boost/thread/thread.hpp>
 #include <time.h> // for nanosleep()
 
+
+#ifdef WIN32
+#include <thread>
+#include <chrono>
+#endif
+
+
 #ifdef OPENVDB_USE_GLFW_3
 //#define GLFW_INCLUDE_GLU
+#if defined(WIN32)
+#include <GL/glew.h>
+#endif
 #include <GLFW/glfw3.h>
 #else // if !defined(OPENVDB_USE_GLFW_3)
 #if defined(__APPLE__) || defined(MACOSX)
@@ -539,6 +549,7 @@ ViewerImpl::open(int width, int height)
             glfwMakeContextCurrent(mWindow);
             BitmapFont13::initialize();
         }
+
     }
     mCamera->setWindow(mWindow);
 
@@ -671,6 +682,23 @@ ViewerImpl::view(const openvdb::GridCPtrVec& gridList)
 #if GLFW_VERSION_MAJOR >= 3
     // Prepare window for rendering.
     glfwMakeContextCurrent(mWindow);
+
+#ifdef WIN32
+	// [RMS] we need to init GLEW somewhere, once, after OpenGL context is created and activated.
+	//   I have not parsed code enough to figure out exactly where that happens, 
+	//   so I am just doing it here, with a static guard. Ick!
+	static bool is_glew_init_called = false;
+	if (is_glew_init_called == false) {
+		glewExperimental=GL_TRUE;
+		GLenum err = glewInit();
+		if (GLEW_OK != err) {
+			fprintf( stderr, "Error: %s\n", glewGetErrorString( err ) );
+			abort();
+		}
+		is_glew_init_called = true;
+	}
+#endif
+
 #endif
 
     {
@@ -833,10 +861,15 @@ ViewerImpl::render()
 void
 ViewerImpl::sleep(double secs)
 {
-    secs = fabs(secs);
-    int isecs = int(secs);
-    struct timespec sleepTime = { isecs /*sec*/, int(1.0e9 * (secs - isecs)) /*nsec*/ };
-    nanosleep(&sleepTime, /*remainingTime=*/NULL);
+#ifdef WIN32
+	std::chrono::duration<double> d(secs);
+	std::this_thread::sleep_for(d);
+#else
+	secs = fabs(secs);
+	int isecs = int(secs);
+	struct timespec sleepTime = { isecs /*sec*/, int(1.0e9 * (secs - isecs)) /*nsec*/ };
+	nanosleep(&sleepTime, /*remainingTime=*/NULL);
+#endif
 }
 
 

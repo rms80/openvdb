@@ -40,13 +40,13 @@
 
 #include <boost/random/mersenne_twister.hpp>
 
-#if defined(__APPLE__) || defined(MACOSX)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+//#if defined(__APPLE__) || defined(MACOSX)
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+//#else
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+//#endif
 
 
 namespace openvdb_viewer {
@@ -64,18 +64,18 @@ public:
     /// @note accepted @c primType: GL_POINTS, GL_LINE_STRIP, GL_LINE_LOOP,
     /// GL_LINES, GL_TRIANGLE_STRIP, GL_TRIANGLE_FAN, GL_TRIANGLES,
     /// GL_QUAD_STRIP, GL_QUADS and GL_POLYGON
-    void genIndexBuffer(const std::vector<GLuint>&, GLenum primType);
+    void genIndexBuffer(const std::vector<unsigned int>&, unsigned int primType);
 
-    void genVertexBuffer(const std::vector<GLfloat>&);
-    void genNormalBuffer(const std::vector<GLfloat>&);
-    void genColorBuffer(const std::vector<GLfloat>&);
+    void genVertexBuffer(const std::vector<float>&);
+    void genNormalBuffer(const std::vector<float>&);
+    void genColorBuffer(const std::vector<float>&);
 
     void clear();
 
 private:
-    GLuint mVertexBuffer, mNormalBuffer, mIndexBuffer, mColorBuffer;
-    GLenum mPrimType;
-    GLsizei mPrimNum;
+	unsigned int mVertexBuffer, mNormalBuffer, mIndexBuffer, mColorBuffer;
+	unsigned int mPrimType;
+	int mPrimNum;
 };
 
 
@@ -89,7 +89,7 @@ public:
     void setFragShader(const std::string&);
 
     void build();
-    void build(const std::vector<GLchar*>& attributes);
+    void build(const std::vector<char*>& attributes);
 
     void startShading() const;
     void stopShading() const;
@@ -97,7 +97,7 @@ public:
     void clear();
 
 private:
-    GLuint mProgram, mVertShader, mFragShader;
+    unsigned int mProgram, mVertShader, mFragShader;
 };
 
 

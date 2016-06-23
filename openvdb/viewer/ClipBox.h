@@ -33,13 +33,13 @@
 
 #include <openvdb/Types.h>
 
-#if defined(__APPLE__) || defined(MACOSX)
-#include <OpenGL/gl.h>
-#include <OpenGL/glu.h>
-#else
-#include <GL/gl.h>
-#include <GL/glu.h>
-#endif
+//#if defined(__APPLE__) || defined(MACOSX)
+//#include <OpenGL/gl.h>
+//#include <OpenGL/glu.h>
+//#else
+//#include <GL/gl.h>
+//#include <GL/glu.h>
+//#endif
 
 
 namespace openvdb_viewer {
@@ -78,7 +78,7 @@ private:
     openvdb::Vec3d mStepSize;
     openvdb::BBoxd mBBox;
     bool mXIsActive, mYIsActive, mZIsActive, mShiftIsDown, mCtrlIsDown;
-    GLdouble mFrontPlane[4], mBackPlane[4], mLeftPlane[4], mRightPlane[4],
+    double mFrontPlane[4], mBackPlane[4], mLeftPlane[4], mRightPlane[4],
         mTopPlane[4], mBottomPlane[4];
 }; // class ClipBox
 
